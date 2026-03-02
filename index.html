@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thyme Card — A card that is actually a person</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:            #06080A;
+      --bg-raised:     #0B1015;
+      --bg-float:      #0F161C;
+      --green-900:     #071910;
+      --green-800:     #0E2A1C;
+      --green-700:     #1A4232;
+      --green-500:     #2D6A4F;
+      --green-400:     #52B788;
+      --green-300:     #74C69D;
+      --gold:          #C8A951;
+      --gold-light:    #DFC07E;
+      --gold-dim:      #7A6232;
+      --cream:         #EDE8DC;
+      --cream-mid:     #B8B3A7;
+      --cream-dim:     #706C63;
+      --mono-muted:    #3A3F44;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CURSOR ─── */
+    #cur  { position: fixed; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: transform 0.1s ease, background 0.15s ease; }
+    #ring { position: fixed; width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(200,169,81,0.35); pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: transform 0.15s ease, border-color 0.2s ease; }
+
+    /* ─── GRAIN OVERLAY ─── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      background-size: 220px;
+      pointer-events: none; z-index: 200; opacity: 0.45;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 52px;
+      background: linear-gradient(to bottom, rgba(6,8,10,0.85) 0%, transparent 100%);
+    }
+    /* EDIT 1: tighter tracking, bolder weight on wordmark */
+    .nav-mark {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--gold);
+    }
+    .nav-links { list-style: none; display: flex; gap: 36px; }
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--cream-dim); text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.nav-cta {
+      color: var(--bg);
+      background: var(--gold);
+      padding: 7px 16px;
+      border-radius: 2px;
+      letter-spacing: 0.18em;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .nav-links a.nav-cta:hover { background: var(--gold-light); color: var(--bg); transform: translateY(-1px); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 80px 24px 60px; position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; width: 900px; height: 900px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(29,66,50,0.18) 0%, transparent 68%);
+      top: 50%; left: 50%; transform: translate(-50%,-54%);
+      pointer-events: none;
+    }
+
+    /* ─── CARD ─── */
+    .card-wrap { perspective: 1400px; margin-bottom: 72px; position: relative; z-index: 2; }
+    .card {
+      width: 430px; height: 270px; border-radius: 18px;
+      position: relative; transform-style: preserve-3d;
+      animation: float 5s ease-in-out infinite; will-change: transform;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px)   rotateX(5deg) rotateY(-8deg); }
+      50%       { transform: translateY(-18px) rotateX(5deg) rotateY(-8deg); }
+    }
+    .card-face {
+      position: absolute; inset: 0; border-radius: 18px; overflow: hidden;
+      background: linear-gradient(140deg, #1e4d38 0%, #0e2b1e 35%, #081812 60%, #122a1e 100%);
+      box-shadow:
+        0 0 0 1px rgba(200,169,81,0.22),
+        0 10px 40px rgba(0,0,0,0.7),
+        0 30px 80px rgba(0,0,0,0.45),
+        0 0 90px rgba(29,66,50,0.25),
+        inset 0 1px 0 rgba(200,169,81,0.15);
+    }
+    .card-face::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(108deg, transparent 22%, rgba(200,169,81,0.07) 42%, rgba(255,255,255,0.04) 50%, rgba(200,169,81,0.07) 58%, transparent 78%);
+      animation: foil 7s ease-in-out infinite;
+    }
+    @keyframes foil { 0% { transform: translateX(-130%) skewX(-18deg); } 100% { transform: translateX(230%) skewX(-18deg); } }
+    .card-face::after {
+      content: ''; position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,169,81,0.55), transparent);
+    }
+    .card-body {
+      position: absolute; inset: 0; padding: 28px 34px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    /* EDIT 1: card wordmark — tighter, bolder */
+    .card-wordmark {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--gold); font-weight: 700;
+    }
+    .card-circles { display: flex; align-items: center; }
+    .card-circles span { display: block; width: 30px; height: 30px; border-radius: 50%; opacity: 0.88; }
+    .card-circles span:first-child { background: var(--gold); }
+    .card-circles span:last-child  { background: #8A6E2C; margin-left: -10px; }
+    .chip {
+      width: 46px; height: 36px; border-radius: 7px;
+      background: linear-gradient(135deg, #D4AF50 0%, #A07E28 45%, #D4AF50 100%);
+      position: relative; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .chip::before { content: ''; position: absolute; inset: 6px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.25); }
+    .chip::after  { content: ''; position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: rgba(0,0,0,0.18); }
+    .card-number {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 19px; font-weight: 300; letter-spacing: 0.28em; color: var(--cream); opacity: 0.88;
+    }
+    .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+    .card-meta { display: flex; flex-direction: column; gap: 3px; }
+    .card-label-sm { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cream-dim); opacity: 0.65; }
+    .card-holder-name { font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream); }
+    .card-role { font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); opacity: 0.8; margin-top: 2px; }
+    .card-expiry { text-align: right; }
+
+    /* ─── HERO COPY ─── */
+    .hero-copy { text-align: center; position: relative; z-index: 2; }
+    .hero-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--green-400); margin-bottom: 18px; opacity: 0.85; }
+    .hero-h1 { font-family: 'Playfair Display', serif; font-size: clamp(38px, 5.5vw, 66px); font-weight: 400; line-height: 1.08; letter-spacing: -0.025em; color: var(--cream); }
+    .hero-h1 em { font-style: italic; color: var(--gold); }
+    .hero-sub { margin-top: 20px; font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 300; color: var(--cream-dim); line-height: 1.65; }
+    .hero-cta { margin-top: 44px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-gold {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: #060A0D; background: var(--gold); border: none; padding: 15px 34px; border-radius: 2px;
+      cursor: none; text-decoration: none; display: inline-block;
+      box-shadow: 0 4px 24px rgba(200,169,81,0.28);
+      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 36px rgba(200,169,81,0.38); }
+    .btn-gold:active { transform: translateY(0); }
+    .btn-ghost {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--cream-mid); background: transparent; border: 1px solid rgba(255,255,255,0.09);
+      padding: 15px 34px; border-radius: 2px; cursor: none; text-decoration: none; display: inline-block;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .btn-ghost:hover { border-color: rgba(200,169,81,0.4); color: var(--gold); }
+    .scroll-cue { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 9px; opacity: 0.35; z-index: 2; }
+    .scroll-cue span { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--cream-dim); }
+    .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--gold), transparent); animation: line-pulse 2.4s ease-in-out infinite; }
+    @keyframes line-pulse { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:.9;transform:scaleY(1.15)} }
+
+    /* ─── RULE ─── */
+    .rule { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(200,169,81,0.18), transparent); }
+
+    /* ─── COMMON ─── */
+    .sec { position: relative; }
+    .label-mono { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--green-400); }
+    .h2-serif { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3.2vw, 46px); font-weight: 400; line-height: 1.18; letter-spacing: -0.02em; color: var(--cream); }
+    .h2-serif em { font-style: italic; color: var(--gold); }
+    .body-serif { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; line-height: 1.78; color: var(--cream-dim); }
+    .body-serif strong { color: var(--cream); font-weight: 500; }
+
+    /* ─── PITCH ─── */
+    .pitch { padding: 90px 52px; max-width: 1220px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 90px; align-items: center; }
+    .pitch-left .label-mono { margin-bottom: 22px; }
+    .pitch-left .h2-serif   { margin-bottom: 28px; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .stat-tile { background: var(--bg-raised); border: 1px solid rgba(200,169,81,0.1); border-radius: 3px; padding: 26px 22px; position: relative; overflow: hidden; }
+    .stat-tile::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--green-500), var(--gold)); }
+    .stat-num  { font-family: 'IBM Plex Mono', monospace; font-size: 34px; font-weight: 500; color: var(--gold); line-height: 1; margin-bottom: 10px; }
+    .stat-desc { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 300; color: var(--cream-dim); line-height: 1.45; }
+
+    /* ─── BENEFITS ─── */
+    .benefits { padding: 90px 52px; background: var(--bg-raised); border-top: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .benefits-header { text-align: center; max-width: 660px; margin: 0 auto 90px; }
+    .benefits-header .label-mono { margin-bottom: 18px; }
+    .bene-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: rgba(200,169,81,0.07); border: 1px solid rgba(200,169,81,0.07); }
+    .bene-cell { background: var(--bg-raised); padding: 44px 34px; position: relative; transition: background 0.25s ease; }
+    .bene-cell:hover { background: #0D1A22; }
+    .bene-glyph { font-size: 22px; margin-bottom: 22px; display: block; color: var(--gold); opacity: 0.7; }
+    .bene-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); background: rgba(200,169,81,0.08); padding: 4px 10px; border-radius: 2px; margin-bottom: 16px; }
+    .bene-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: var(--cream); line-height: 1.2; margin-bottom: 13px; }
+    .bene-desc { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 300; color: var(--cream-dim); line-height: 1.72; }
+
+    /* ─── ANALYTICS SUITE ─── */
+    .analytics {
+      padding: 90px 52px;
+      background: linear-gradient(180deg, #070E0A 0%, #060809 100%);
+      border-top: 1px solid rgba(82,183,136,0.1);
+      border-bottom: 1px solid rgba(82,183,136,0.1);
+      position: relative; overflow: hidden;
+    }
+    .analytics::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(29,66,50,0.22) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .analytics-header { text-align: center; max-width: 700px; margin: 0 auto 80px; position: relative; z-index: 1; }
+    .analytics-header .label-mono { margin-bottom: 14px; }
+    .analytics-tag {
+      display: inline-block; font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--green-400); border: 1px solid rgba(82,183,136,0.25);
+      padding: 5px 12px; border-radius: 2px; margin-bottom: 20px;
+    }
+    .analytics-sub { margin-top: 14px; font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 300; color: var(--cream-dim); line-height: 1.6; }
+    .analytics-grid {
+      max-width: 1120px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px;
+      background: rgba(82,183,136,0.06);
+      border: 1px solid rgba(82,183,136,0.1);
+      position: relative; z-index: 1;
+    }
+    .analytics-module {
+      background: #070E0A;
+      padding: 32px 24px 28px;
+      display: flex; flex-direction: column;
+      transition: background 0.25s ease;
+    }
+    .analytics-module:hover { background: #0B1810; }
+    .analytics-viz { margin-bottom: 20px; height: 52px; display: flex; align-items: flex-end; }
+    .analytics-module-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px; font-weight: 400; color: var(--cream);
+      margin-bottom: 8px; line-height: 1.25;
+    }
+    .analytics-module-desc {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; line-height: 1.65; letter-spacing: 0.01em;
+      color: var(--cream-dim); flex: 1;
+    }
+    .analytics-module-tag {
+      display: inline-block; margin-top: 14px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--green-400); opacity: 0.7;
+    }
+
+    /* ─── CARDHOLDER ─── */
+    .about { padding: 90px 52px; max-width: 1220px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 90px; align-items: start; }
+    .about-left .label-mono { margin-bottom: 22px; }
+    .about-left .h2-serif   { margin-bottom: 28px; }
+    .timeline { position: relative; padding-left: 26px; margin-top: 8px; }
+    .timeline::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 1px; background: linear-gradient(to bottom, var(--gold) 0%, var(--green-500) 60%, transparent 100%); }
+    .tl-item { margin-bottom: 44px; position: relative; }
+    .tl-dot { position: absolute; left: -30px; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 14px rgba(200,169,81,0.45); }
+    .tl-year { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green-400); margin-bottom: 6px; }
+    .tl-role { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 400; color: var(--cream); margin-bottom: 4px; }
+    .tl-co   { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 10px; }
+    .tl-desc { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 300; color: var(--cream-dim); line-height: 1.72; }
+
+    /* ─── ELIGIBILITY ─── */
+    .eligibility { padding: 130px 52px; background: var(--bg-raised); border-top: 1px solid rgba(255,255,255,0.04); }
+    .elig-inner { max-width: 1120px; margin: 0 auto; }
+    .elig-inner .label-mono { margin-bottom: 18px; }
+    .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; margin-top: 64px; }
+    .skill-cat { background: var(--bg); border: 1px solid rgba(200,169,81,0.09); border-radius: 3px; padding: 34px; }
+    .skill-cat-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(200,169,81,0.09); }
+    .skill-cat-icon { flex-shrink: 0; color: var(--gold); opacity: 0.8; }
+    .skill-cat-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); }
+    .skill-list { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+    .skill-list li { display: flex; align-items: baseline; gap: 12px; font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 300; color: var(--cream-mid); }
+    .skill-list li::before { content: '◆'; font-size: 6px; color: var(--green-400); flex-shrink: 0; position: relative; top: -1px; }
+
+    /* ─── FINE PRINT ─── */
+    .fine-print { padding: 52px 52px; border-top: 1px solid rgba(255,255,255,0.04); }
+    .fp-inner { max-width: 920px; margin: 0 auto; }
+    .fp-heading { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--cream-dim); margin-bottom: 22px; opacity: 0.55; }
+    .fp-body { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.88; color: var(--mono-muted); }
+    .fp-body span { color: var(--cream-dim); }
+    .fp-body em { color: var(--green-400); font-style: normal; }
+
+    /* ─── APPLY ─── */
+    .apply { padding: 90px 52px; background: var(--green-900); border-top: 1px solid rgba(200,169,81,0.12); }
+    .apply-inner { max-width: 620px; margin: 0 auto; text-align: center; }
+    .status-badge { display: inline-flex; align-items: center; gap: 9px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green-400); background: rgba(82,183,136,0.08); border: 1px solid rgba(82,183,136,0.2); padding: 9px 18px; border-radius: 2px; margin-bottom: 36px; }
+    .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-400); animation: pulse 2.2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+    .apply-inner .label-mono { margin-bottom: 18px; }
+    .apply-inner .h2-serif   { margin-bottom: 16px; }
+    .contact-form { margin-top: 52px; text-align: left; display: flex; flex-direction: column; gap: 22px; }
+    .field { display: flex; flex-direction: column; gap: 9px; }
+    .field-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); }
+    .field input, .field textarea { background: rgba(0,0,0,0.35); border: 1px solid rgba(200,169,81,0.14); border-radius: 2px; padding: 14px 17px; font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--cream); outline: none; transition: border-color 0.2s ease, background 0.2s ease; }
+    .field input:focus, .field textarea:focus { border-color: rgba(200,169,81,0.38); background: rgba(0,0,0,0.5); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--cream-dim); opacity: 0.38; }
+    .field textarea { resize: none; height: 128px; line-height: 1.6; }
+    .submit-btn { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #060A0D; background: var(--gold); border: none; padding: 18px 36px; border-radius: 2px; cursor: none; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(200,169,81,0.25); transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease; }
+    .submit-btn:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(200,169,81,0.35); }
+    .submit-btn:active { transform: translateY(0); }
+    .submit-btn:disabled { background: var(--green-500); color: var(--cream); cursor: not-allowed; }
+
+    /* ─── FOOTER ─── */
+    footer { padding: 36px 52px; border-top: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center; }
+    .foot-mark { font-family: 'Playfair Display', serif; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); opacity: 0.55; font-weight: 700; }
+    .foot-copy { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--cream-dim); opacity: 0.28; }
+
+    /* ─── REVEAL ─── */
+    .rev { opacity: 0; transform: translateY(22px); transition: opacity 0.75s ease, transform 0.75s ease; }
+    .rev.in { opacity: 1; transform: translateY(0); }
+    .rev.d1 { transition-delay: 0.1s; }
+    .rev.d2 { transition-delay: 0.2s; }
+    .rev.d3 { transition-delay: 0.3s; }
+
+    /* ─── MOBILE ─── */
+    /* ─── AFK SECTION ─── */
+    .afk {
+      padding: 80px 52px;
+      background: var(--bg-raised);
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .afk-inner {
+      max-width: 1120px; margin: 0 auto;
+    }
+    .afk-link {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-top: 32px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      border-bottom: 1px solid rgba(200,169,81,0.3);
+      padding-bottom: 3px;
+      transition: border-color 0.2s ease, gap 0.2s ease;
+    }
+    .afk-link:hover { border-color: rgba(200,169,81,0.8); gap: 14px; }
+
+    /* ─── IMAGE STRIP ─── */
+    .afk-strip-wrap {
+      margin-top: 52px; margin-left: -52px; margin-right: -52px;
+      overflow: hidden; position: relative;
+    }
+    .afk-strip-wrap::before, .afk-strip-wrap::after {
+      content: ''; position: absolute; top: 0; bottom: 0; width: 110px; z-index: 2; pointer-events: none;
+    }
+    .afk-strip-wrap::before { left: 0; background: linear-gradient(to right, var(--bg-raised), transparent); }
+    .afk-strip-wrap::after  { right: 0; background: linear-gradient(to left, var(--bg-raised), transparent); }
+    .afk-strip {
+      display: flex; gap: 10px; width: max-content;
+      padding: 0 52px;
+      animation: strip-scroll 38s linear infinite;
+    }
+    .afk-strip:hover { animation-play-state: paused; }
+    @keyframes strip-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .afk-strip img {
+      height: 300px; width: 216px;
+      object-fit: cover; object-position: center top;
+      border-radius: 4px; display: block; flex-shrink: 0;
+      filter: brightness(0.85) contrast(1.05) saturate(0.9);
+      transition: filter 0.35s ease;
+    }
+    .afk-strip img:hover { filter: brightness(1) contrast(1) saturate(1.1); }
+
+    /* ─── TRUSTED BY ─── */
+    .trusted {
+      padding: 44px 52px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .trusted-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; gap: 52px;
+    }
+    .trusted-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--cream-dim); opacity: 0.45; white-space: nowrap; flex-shrink: 0;
+    }
+    .trusted-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+    .trusted-logos { display: flex; align-items: center; gap: 52px; flex-wrap: wrap; }
+    .trusted-logo { opacity: 0.5; transition: opacity 0.25s ease; display: flex; align-items: center; }
+    .trusted-logo:hover { opacity: 0.9; }
+    .trusted-logo img { height: 28px; width: auto; object-fit: contain; filter: brightness(0) invert(1); }
+    .trusted-logo img.logo-klarna { height: 60px; }
+    .trusted-logo img.logo-parker { height: 19px; }
+
+    /* ─── COPY TOAST ─── */
+    .copy-wrap { display: inline-flex; align-items: center; gap: 8px; position: relative; }
+    .copy-btn {
+      background: none; border: none; cursor: none;
+      color: var(--gold); opacity: 0.5; padding: 0;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+      display: inline-flex; align-items: center;
+    }
+    .copy-btn:hover { opacity: 1; transform: scale(1.15); }
+    .copy-toast {
+      position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+      font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.15em;
+      text-transform: uppercase; background: var(--gold); color: #060A0D;
+      padding: 4px 10px; border-radius: 2px; white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+    }
+    .copy-toast.visible { opacity: 1; }
+
+    /* ─── SOCIAL LINKS ─── */
+    .social-links {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; margin-top: 36px; margin-bottom: 4px;
+    }
+    .social-link {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--cream-dim); text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 10px 16px; border-radius: 2px;
+      transition: color 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+    }
+    .social-link svg { opacity: 0.7; transition: opacity 0.22s ease; flex-shrink: 0; }
+    .social-link:hover {
+      color: var(--gold); border-color: rgba(200,169,81,0.35);
+      background: rgba(200,169,81,0.05);
+    }
+    .social-link:hover svg { opacity: 1; }
+    .social-link:focus-visible { outline: 1px solid var(--gold); outline-offset: 3px; }
+    .social-link:active { transform: scale(0.97); }
+    .social-sep { width: 1px; height: 28px; background: rgba(255,255,255,0.07); }
+
+    @media (max-width: 860px) {
+      nav { padding: 18px 24px; }
+      .nav-links { display: none; }
+      .card { width: 330px; height: 208px; }
+      .card-number { font-size: 15px; }
+      .card-holder-name { font-size: 11px; }
+      .pitch, .about { grid-template-columns: 1fr; gap: 52px; padding: 60px 24px; }
+      .bene-grid { grid-template-columns: 1fr; }
+      .analytics-grid { grid-template-columns: repeat(2, 1fr); }
+      .afk { padding: 60px 24px; }
+      .afk-strip-wrap { margin-left: -24px; margin-right: -24px; }
+      .afk-strip img { height: 220px; width: 160px; }
+      .trusted { padding: 36px 24px; }
+      .trusted-inner { flex-wrap: wrap; gap: 24px; }
+      .trusted-logos { gap: 28px; }
+      .benefits, .apply, .analytics { padding: 60px 24px; }
+      .social-links { flex-wrap: wrap; gap: 8px; }
+      .social-sep { display: none; }
+      .fine-print { padding: 44px 24px; }
+      footer { flex-direction: column; gap: 10px; text-align: center; padding: 28px 24px; }
+    }
+    @media (max-width: 540px) {
+      .analytics-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur"></div>
+  <div id="ring"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-mark">Thyme | Neel</div>
+    <ul class="nav-links">
+      <li><a href="#benefits">Benefits</a></li>
+      <li><a href="#analytics">Analytics</a></li>
+      <li><a href="#cardholder">Cardholder</a></li>
+      <li><a href="#apply" class="nav-cta">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+
+    <div class="card-wrap">
+      <div class="card" id="card">
+        <div class="card-face">
+          <div class="card-body">
+            <div class="card-top">
+              <div class="card-wordmark">Thyme</div>
+              <div class="card-circles"><span></span><span></span></div>
+            </div>
+            <div class="chip"></div>
+            <div class="card-number">4001 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 1004</div>
+            <div class="card-bottom">
+              <div class="card-meta">
+                <div class="card-holder-name">Neelotpal Nag</div>
+                <div class="card-role">Credit Risk Professional</div>
+              </div>
+              <div class="card-expiry">
+                <div class="card-label-sm">Member Since</div>
+                <div class="card-holder-name">2019</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-copy">
+      <div class="hero-eyebrow">Limited Edition</div>
+      <h1 class="hero-h1">The card that is<br><em>actually a person.</em></h1>
+      <p class="hero-sub">Introducing Neel &mdash; the world's first AI-first<br>Credit Risk professional disguised as a credit product.</p>
+      <div class="hero-cta">
+        <a href="#apply" class="btn-gold">Apply Now</a>
+        <a href="#benefits" class="btn-ghost">View Benefits</a>
+      </div>
+    </div>
+
+    <div class="scroll-cue">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ─── PITCH ─── -->
+  <section class="sec">
+    <div class="pitch">
+      <div class="pitch-left rev">
+        <div class="label-mono">What (who) is Thyme Card?</div>
+        <h2 class="h2-serif" style="margin-top:20px;margin-bottom:26px;">Credit risk expertise,<br><em>powered by AI.</em></h2>
+        <p class="body-serif">
+         Other credit cards promise rewards. <strong>Thyme Card is the reward</strong> &mdash; a Credit Risk Professional
+          who knows how to build the intelligence, and the systems that leverage the power of AI to act upon it. From consumer lending products such as BNPL and micro-financing, to lines of credit for SME/MSMEs, Thyme Card knows how to make sure your portfolio stays robust and delivers business.
+          <br><br>
+          Become an AI-first Risk and Compliance engine, deploy AI agents to multiply your operational efficiency, and guarantee the highest standards of service. 
+        </p>
+      </div>
+
+      <div class="stats-grid rev d1">
+        <div class="stat-tile">
+          <div class="stat-num"> 7 years </div>
+          <div class="stat-desc">Risk, Compliance and Engineering Experience</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num">Agentic AI</div>
+          <div class="stat-desc">Production-ready AI agents and workflows deployed</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num">US & EU</div>
+          <div class="stat-desc">Experienced in US B2B lending and 9 EU consumer lending markets</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-num">€3M+</div>
+          <div class="stat-desc">Loss Reductions and Efficiency Gains</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ─── BENEFITS ─── -->
+  <section class="benefits sec" id="benefits">
+    <div class="benefits-header rev">
+      <div class="label-mono">Card Benefits</div>
+      <h2 class="h2-serif" style="margin-top:18px;">Everything you expect<br>from a <em>premium card.</em></h2>
+    </div>
+
+    <div class="bene-grid">
+      <div class="bene-cell rev d1">
+        <span class="bene-glyph">⬡</span>
+        <div class="bene-tag">Decision Engine</div>
+        <h3 class="bene-title">Automated Underwriting</h3>
+        <p class="bene-desc">End-to-end credit decision architecture: scoring models, policy rule integration, and real-time decisioning. Compliance and audit readiness is never compromised on.</p>
+      </div>
+      <div class="bene-cell rev">
+        <span class="bene-glyph">◈</span>
+        <div class="bene-tag">AI-Powered</div>
+        <h3 class="bene-title">Agentic AI for Risk & Due Diligence</h3>
+        <p class="bene-desc"> Build AI-first systems for boosting decision-making in Underwriting and Customer Due Diligence. Improve operational speed and efficiency in highly regulated financial environments using agentic process frameworks.</p>
+      </div>
+      <div class="bene-cell rev d2">
+        <span class="bene-glyph">◉</span>
+        <div class="bene-tag">Intelligence</div>
+        <h3 class="bene-title">Portfolio Management</h3>
+        <p class="bene-desc">Managing a $100M portfolio of US-based SMEs with 600+ clients at Parker. Managed real-time decision policies and risk performance across nine EU markets at Klarna.</p>
+      </div>
+      <div class="bene-cell rev">
+        <span class="bene-glyph">◫</span>
+        <div class="bene-tag">Analytics</div>
+        <h3 class="bene-title">Measure What Matters</h3>
+        <p class="bene-desc">Combination of proven analytical flair and research-driven intuitions to develop world-class analytics across your organization. Establish processes for automated experimentations and actions based on meticulously-selected metrics.</p>
+      </div>
+      <div class="bene-cell rev d1">
+        <span class="bene-glyph">◑</span>
+        <div class="bene-tag">Financial Crime</div>
+        <h3 class="bene-title">Fraud &amp; AML Strategy</h3>
+        <p class="bene-desc">End-to-end ownership of AML and Fraud strategy at Parker. With deep experience of AML and Fraud monitoring systems at Citibank and Parker, ensure robust protection against bad actors and keep your banking partners and debt facilities happy.</p>
+      </div>
+      <div class="bene-cell rev d2">
+        <span class="bene-glyph">◬</span>
+        <div class="bene-tag">Navigate Regulations</div>
+        <h3 class="bene-title">Pliancy with Compliance</h3>
+        <p class="bene-desc">Never compromise with compliance. Your partner banks will be happy with elaborate regulatory reporting. Your debt facilities will be happy with detailed financial reporting. Your compliance team will either thank you or be replaced by agents.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ANALYTICS SUITE ─── -->
+  <section class="analytics sec" id="analytics">
+    <div class="analytics-header rev">
+      <div class="analytics-tag">Integrated Intelligence</div>
+      <div class="label-mono">Thyme Analytics&trade;</div>
+      <h2 class="h2-serif" style="margin-top:18px;">Integrated analytics.<br><em>Real-time. Always on.</em></h2>
+      <p class="analytics-sub">Your Thyme Card ships with a full portfolio intelligence suite &mdash; because owning the credit policy without monitoring it is just wishful thinking.</p>
+    </div>
+
+    <div class="analytics-grid">
+
+      <!-- Portfolio Monitor -->
+      <div class="analytics-module rev">
+        <div class="analytics-viz">
+          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <polyline points="0,44 18,38 36,30 54,33 72,20 90,13 110,7" stroke="#52B788" stroke-width="1.5" fill="none" opacity="0.85"/>
+            <polyline points="0,44 18,38 36,30 54,33 72,20 90,13 110,7" stroke="url(#pg)" stroke-width="0" fill="url(#pf)" opacity="0.15"/>
+            <defs>
+              <linearGradient id="pg" x1="0" y1="0" x2="110" y2="0"><stop offset="0%" stop-color="#52B788"/><stop offset="100%" stop-color="#C8A951"/></linearGradient>
+              <linearGradient id="pf" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#52B788" stop-opacity="0.3"/><stop offset="100%" stop-color="#52B788" stop-opacity="0"/></linearGradient>
+            </defs>
+            <circle cx="110" cy="7" r="3" fill="#C8A951"/>
+          </svg>
+        </div>
+        <div class="analytics-module-name">Portfolio Monitor</div>
+        <div class="analytics-module-desc">Real-time credit performance monitoring. Approval, delinquency and loss rates surfaced continuously across cohorts and vintages.</div>
+        <span class="analytics-module-tag">Live</span>
+      </div>
+
+      <!-- Risk Intelligence -->
+      <div class="analytics-module rev d1">
+        <div class="analytics-viz">
+          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 46 A40 40 0 0 1 100 46" stroke="#1A3A28" stroke-width="6" fill="none"/>
+            <path d="M10 46 A40 40 0 0 1 72 16" stroke="#52B788" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <circle cx="72" cy="16" r="4" fill="#C8A951"/>
+            <text x="55" y="44" font-family="IBM Plex Mono" font-size="9" fill="#706C63" text-anchor="middle">SCORE</text>
+            <text x="55" y="35" font-family="IBM Plex Mono" font-size="11" fill="#C8A951" text-anchor="middle" font-weight="500">742</text>
+          </svg>
+        </div>
+        <div class="analytics-module-name">Risk Intelligence</div>
+        <div class="analytics-module-desc">ML-driven risk scoring, enhanced with AI-assisted evaluation, credit bureau and open-banking data, and behavioural signals.</div>
+        <span class="analytics-module-tag">Data-Powered</span>
+      </div>
+
+      <!-- Vintage Analysis -->
+      <!-- <div class="analytics-module rev d2">
+        <div class="analytics-viz">
+          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4"  y="38" width="14" height="10" rx="1" fill="#52B788" opacity="0.9"/>
+            <rect x="22" y="28" width="14" height="20" rx="1" fill="#52B788" opacity="0.75"/>
+            <rect x="40" y="19" width="14" height="29" rx="1" fill="#52B788" opacity="0.6"/>
+            <rect x="58" y="24" width="14" height="24" rx="1" fill="#C8A951" opacity="0.55"/>
+            <rect x="76" y="33" width="14" height="15" rx="1" fill="#C8A951" opacity="0.4"/>
+            <rect x="94" y="40" width="12" height="8"  rx="1" fill="#3A3F44" opacity="0.6"/>
+            <text x="4"  y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q1</text>
+            <text x="22" y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q2</text>
+            <text x="40" y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q3</text>
+            <text x="58" y="48" font-family="IBM Plex Mono" font-size="6" fill="#C8A951" opacity="0.5">Q4</text>
+          </svg>
+        </div>
+        <div class="analytics-module-name">Vintage Analysis</div>
+        <div class="analytics-module-desc">Cohort-level loss curves and aging analysis. See how every book of business performs over its lifetime.</div>
+        <span class="analytics-module-tag">Cohort View</span>
+      </div> -->
+
+      <!-- Vintage Analysis -->
+      <div class="analytics-module rev d2">
+        <div class="analytics-viz">
+          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4"  y="38" width="14" height="10" rx="1" fill="#52B788" opacity="0.9"/>
+            <rect x="22" y="28" width="14" height="20" rx="1" fill="#52B788" opacity="0.75"/>
+            <rect x="40" y="19" width="14" height="29" rx="1" fill="#52B788" opacity="0.6"/>
+            <rect x="58" y="24" width="14" height="24" rx="1" fill="#C8A951" opacity="0.55"/>
+            <rect x="76" y="33" width="14" height="15" rx="1" fill="#C8A951" opacity="0.4"/>
+            <rect x="94" y="40" width="12" height="8"  rx="1" fill="#3A3F44" opacity="0.6"/>
+            <text x="4"  y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q1</text>
+            <text x="22" y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q2</text>
+            <text x="40" y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q3</text>
+            <text x="58" y="48" font-family="IBM Plex Mono" font-size="6" fill="#C8A951" opacity="0.5">Q4</text>
+          </svg>
+        </div>
+        <div class="analytics-module-name">Agentic Design</div>
+        <div class="analytics-module-desc">Design with an AI-first mindset. MCPs and Orchestrators are the present and the future. </div>
+        <span class="analytics-module-tag">Orchestrate</span>
+      </div>
+      
+      <!-- Decision Engine -->
+      <div class="analytics-module rev d3">
+        <div class="analytics-viz">
+          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="38" y="2" width="34" height="14" rx="2" fill="#1A4232" stroke="#52B788" stroke-width="0.75"/>
+            <text x="55" y="13" font-family="IBM Plex Mono" font-size="7" fill="#52B788" text-anchor="middle">INPUT</text>
+            <line x1="55" y1="16" x2="55" y2="24" stroke="#52B788" stroke-width="0.75"/>
+            <polygon points="55,24 50,20 60,20" fill="#52B788" opacity="0.6"/>
+            <line x1="55" y1="25" x2="22" y2="36" stroke="#52B788" stroke-width="0.75"/>
+            <line x1="55" y1="25" x2="88" y2="36" stroke="#3A4A3A" stroke-width="0.75"/>
+            <rect x="4"  y="36" width="36" height="13" rx="2" fill="#1A4232" stroke="#52B788" stroke-width="0.75"/>
+            <rect x="70" y="36" width="36" height="13" rx="2" fill="#0B1015" stroke="#3A4A3A" stroke-width="0.75"/>
+            <text x="22" y="47" font-family="IBM Plex Mono" font-size="6.5" fill="#52B788" text-anchor="middle">APPROVE</text>
+            <text x="88" y="47" font-family="IBM Plex Mono" font-size="6.5" fill="#706C63" text-anchor="middle">REVIEW</text>
+          </svg>
+        </div>
+        <div class="analytics-module-name">Evaluation Engine</div>
+        <div class="analytics-module-desc">Automated screening of applications with HITL at every critical step. Fully auditable.</div>
+        <span class="analytics-module-tag">Agentic AI</span>
+      </div>
+
+      <!-- Fraud Radar -->
+      <div class="analytics-module rev d3">
+        <div class="analytics-viz"> 
+          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="18" cy="34" r="2.5" fill="#52B788" opacity="0.55"/>
+            <circle cx="32" cy="26" r="2.5" fill="#52B788" opacity="0.55"/>
+            <circle cx="46" cy="30" r="2.5" fill="#52B788" opacity="0.55"/>
+            <circle cx="38" cy="40" r="2.5" fill="#52B788" opacity="0.55"/>
+            <circle cx="28" cy="20" r="2.5" fill="#52B788" opacity="0.55"/>
+            <circle cx="55" cy="37" r="2.5" fill="#52B788" opacity="0.55"/>
+            <circle cx="48" cy="18" r="2.5" fill="#52B788" opacity="0.55"/>
+            <circle cx="62" cy="24" r="2.5" fill="#52B788" opacity="0.55"/>
+            <circle cx="90" cy="9"  r="5.5" fill="#C8A951" opacity="0.9"/>
+            <circle cx="90" cy="9"  r="9"   stroke="#C8A951" stroke-width="0.75" fill="none" opacity="0.3"/>
+            <line x1="70" y1="22" x2="86" y2="12" stroke="#C8A951" stroke-width="0.75" stroke-dasharray="3,2"/>
+            <text x="90" y="12" font-family="IBM Plex Mono" font-size="5.5" fill="#C8A951" text-anchor="middle">!</text>
+          </svg>
+        </div>
+        <div class="analytics-module-name">AML and Fraud Radar</div>
+        <div class="analytics-module-desc">Monitor your customers for unusual activity, and flag outliers before they become incidents. Minimize operational burden via constant improvement cycles and AI usage.</div>
+        <span class="analytics-module-tag">AML / Fraud</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── CARDHOLDER ─── -->
+  <section class="sec" id="cardholder">
+    <div class="about">
+      <div class="about-left rev">
+        <div class="label-mono">About the Creator</div>
+        <h2 class="h2-serif" style="margin-top:20px;">Neelotpal Nag.<br><em>Builder with flair for Risk.</em></h2>
+        <p class="body-serif" style="margin-top:24px;">
+          A credit risk professional and tech-savvy builder based in Berlin. Spent years at the intersection
+          of machine learning, financial risk, and production systems &mdash; building scoring models, developing
+          AI-Agentic systems, and running risk engines across US and European markets.
+          <br><br>
+          Currently at Parker, owning the Credit, Fraud and AML strategy and managing a portfolio of 600+ SME clients. Previously at Klarna,
+          owning the real-time credit decision policy across nine EU markets. Started the risk journey at Citibank,
+          building AML monitoring methods and risk scoring models across India and APAC.
+          <br><br>
+          Studied chemical engineering at IIT Delhi, and made backend software for IoT devices. Ended up in credit risk. The engineer mindset stayed strong.
+        </p>
+      </div>
+
+      <div class="rev d1">
+        <div class="label-mono" style="margin-bottom:32px;">Career Timeline</div>
+        <div class="timeline">
+
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-year">Oct 2024 &mdash; Present</div>
+            <div class="tl-role">Manager, Credit Risk Strategy</div>
+            <div class="tl-co">Parker Group, Inc. &mdash; New York (remote in Berlin, Germany)</div>
+            <div class="tl-desc">Owns credit policy, KYB/KYC, and portfolio analytics for 600+ SME clients. Built and deployed an AI-Agentic KYB/KYC system with HITL. Credit loss held below 50bps of GPV, fraud loss below 1bps.</div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-year">Jan 2022 &mdash; Sep 2024</div>
+            <div class="tl-role">Senior Analyst, Credit Risk</div>
+            <div class="tl-co">Klarna AB &mdash; Berlin, Germany</div>
+            <div class="tl-desc">Owned credit policies, real-time decision system and portfolio analytics across 9 EU markets. Delivered €3M+ in annual savings. Led the 0% APR loan product launch in Germany &amp; Nordics, improving volume by 4%.</div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-year">2019 &mdash; 2021</div>
+            <div class="tl-role">Senior Analyst, AML &amp; Financial Crime</div>
+            <div class="tl-co">Citibank &mdash; Bangalore, India</div>
+            <div class="tl-desc">Built and maintained AML transaction monitoring systems and risk scoring models, yielding 22% reduction in operational costs. Led KPI-driven systems analysis across India and APAC. Highest performance rating.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TRUSTED BY ─── -->
+  <section class="trusted sec">
+    <div class="trusted-inner">
+      <div class="trusted-label">Trusted by the best in the market</div>
+      <div class="trusted-divider"></div>
+      <div class="trusted-logos">
+
+        <!-- Citi -->
+        <div class="trusted-logo">
+          <img src="images/logos/citi-logo.svg" alt="Citi">
+        </div>
+
+        <!-- Klarna -->
+        <div class="trusted-logo">
+          <img src="images/logos/klarna-logo.png" alt="Klarna" class="logo-klarna">
+        </div>
+
+        <!-- Parker -->
+        <div class="trusted-logo">
+          <img src="images/logos/parker-logo.svg" alt="Parker" class="logo-parker">
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── AFK / INTERESTS ─── -->
+  <section class="afk sec" id="afk">
+    <div class="afk-inner rev">
+      <div class="afk-left">
+        <div class="label-mono" style="margin-bottom:18px;">Creator — Off the Clock</div>
+        <h2 class="h2-serif">The person<br><em>beyond the numbers.</em></h2>
+        <!-- <p class="body-serif" style="margin-top:20px;">
+          
+          <br><br>
+          There's a whole page for this.
+        </p> -->
+        <!-- <a href="interests.html" class="afk-link">
+          <span>View Creator Profile</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="2" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><polyline points="9,4 13,8 9,12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a> -->
+      </div>
+    </div>
+  </div>
+  <div class="afk-strip-wrap">
+    <div class="afk-strip">
+      <img src="images/optimized/IMG_6714.jpg"   alt="Berlin to Prague - Bikepacking">
+      <img src="images/optimized/A88DACD1-F42C-4E5D-9C7D-D57A968118C4.JPG" alt="Berlin Half Marathon">
+      <img src="images/optimized/IMG_2044.jpg"   alt="Follow me on @neelstreats">
+      <img src="images/optimized/94918943-421e-4dd5-9438-cd08f6e92b1a.JPG" alt="Saimaa 300km Tour">
+      <img src="images/optimized/eb1e5026-b944-4805-8e7b-16f117afb0ba.JPG" alt="Berlin BMW Full Marathon">
+      <img src="images/optimized/IMG_2043.jpg"   alt="Follow me on @neelstreats">
+      <!-- Duplicate set for seamless loop -->
+      <img src="images/optimized/IMG_6714.jpg"   alt="Berlin to Prague - Bikepacking">
+      <img src="images/optimized/A88DACD1-F42C-4E5D-9C7D-D57A968118C4.JPG" alt="Berlin Half Marathon">
+      <img src="images/optimized/IMG_2044.jpg"   alt="Follow me on @neelstreats">
+      <img src="images/optimized/94918943-421e-4dd5-9438-cd08f6e92b1a.JPG" alt="Saimaa 300km Tour">
+      <img src="images/optimized/eb1e5026-b944-4805-8e7b-16f117afb0ba.JPG" alt="Berlin BMW Full Marathon">
+      <img src="images/optimized/IMG_2043.jpg"   alt="Follow me on @neelstreats">
+    </div>
+  </div>
+</section>
+
+  <div class="rule"></div>
+
+  <!-- ─── FINE PRINT ─── -->
+  <section class="fine-print sec">
+    <div class="fp-inner">
+      <div class="fp-heading">Terms &amp; Conditions &mdash; Please Read Carefully, Or Don't, We're Not Your Compliance Officer</div>
+      <p class="fp-body">
+        Thyme Card's products do not offer personal financial decisions, which remain, regrettably, outside scope.
+
+        <span>Thyme Card is issued by Neelotpal Nag ("Neel"), a credit risk professional and AI practitioner currently deployed in Berlin, Germany. Neel thrives on high-stakes problems and ownership.</span> Not a bank. Not a regulated financial entity. Does hold strong opinions about your risk policies, however.
+
+        Graduated from the Indian Institute of Technology, Delhi with a degree in Chemical Engineering &mdash; a credential that explains both the engineer instincts and the stubborn insistence on first-principles thinking. The pivot to a Risk career was entirely logical and requires no further justification.
+
+        <span>Technical specifications:</span> Fluent in Python, SQL and Agentic AI Frameworks. Uses Claude Code but also cleans the slop. Previously a software developer for IoT devices. Programming skills never left.
+
+        <em>The name "Thyme" refers to (a) the herb Thymus vulgaris (ahem), chosen for its associations with patience and quiet competence.</em>
+
+        <span>Thyme Card is always accepting applications.</span> No minimum credit score required to reach out &mdash; though the cardholder may, out of professional habit, form a view on yours. Available for senior-level credit risk, lending tech and strategy roles. Will not tell you your model is fine when it isn't.
+      </p>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ─── APPLY ─── -->
+  <section class="apply sec" id="apply">
+    <div class="apply-inner">
+      <div class="status-badge">
+        <div class="pulse-dot"></div>
+        Currently Accepting Applications
+      </div>
+
+      <div class="label-mono rev">Apply for Thyme Card</div>
+      <h2 class="h2-serif rev d1" style="margin-top:18px;">Ready to add <em>Thyme</em><br>to your business?</h2>
+      <p class="body-serif rev d2" style="margin-top:18px;">
+        Get in touch. No minimum credit score required.
+      </p>
+      <p class="rev d2" style="margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;color:var(--gold);">
+        <span class="copy-wrap">
+          <a href="mailto:neelotpalnag@gmail.com" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(200,169,81,0.3);padding-bottom:1px;transition:border-color 0.2s ease;" onmouseover="this.style.borderColor='rgba(200,169,81,0.8)'" onmouseout="this.style.borderColor='rgba(200,169,81,0.3)'">neelotpalnag@gmail.com</a>
+          <button class="copy-btn" onclick="copyEmail(this)" title="Copy email">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4.5" y="0.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.1"/>
+              <path d="M2.5 3.5H2A1.5 1.5 0 0 0 .5 5v7A1.5 1.5 0 0 0 2 13.5h7A1.5 1.5 0 0 0 10.5 12v-.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+            </svg>
+            <span class="copy-toast">Copied!</span>
+          </button>
+        </span>
+      </p>
+
+      <div class="social-links rev d2">
+        <!-- GitHub -->
+        <a href="https://github.com/papapumpkins" target="_blank" rel="noopener" class="social-link" title="GitHub">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.49.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.34-3.369-1.34-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.165 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+          </svg>
+          GitHub
+        </a>
+
+        <div class="social-sep"></div>
+
+        <!-- LinkedIn -->
+        <a href="https://www.linkedin.com/in/neelotpalnag/" target="_blank" rel="noopener" class="social-link" title="LinkedIn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          LinkedIn
+        </a>
+
+        <div class="social-sep"></div>
+
+        <!-- Instagram -->
+        <a href="https://www.instagram.com/neelotpalnag/?hl=en" target="_blank" rel="noopener" class="social-link" title="Instagram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+          </svg>
+          Instagram
+        </a>
+      </div>
+
+      <!-- <form class="contact-form rev d2" onsubmit="handleSubmit(event)">
+        <div class="field">
+          <label class="field-label" for="f-name">Your Name</label>
+          <input type="text" id="f-name" placeholder="Your full name" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-org">Organization</label>
+          <input type="text" id="f-org" placeholder="We need this for KYB/KYC. No hard pulls.">
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-email">Email</label>
+          <input type="email" id="f-email" placeholder="your@email.com" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-msg">Nature of Enquiry</label>
+          <textarea id="f-msg" placeholder="Tell me about the opportunity, project, or collaboration you have in mind..." required></textarea>
+        </div>
+        <button type="submit" class="submit-btn" id="submit-btn">Submit Application &rarr;</button>
+      </form> -->
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="foot-mark">Thyme Card</div>
+    <div class="foot-copy">&copy; 2026 Neelotpal Nag &nbsp;&middot;&nbsp; <a href="mailto:neelotpalnag@gmail.com" style="color:inherit;text-decoration:none;opacity:1;border-bottom:1px solid rgba(200,169,81,0.2);padding-bottom:1px;">neelotpalnag@gmail.com</a> &nbsp;&middot;&nbsp; Not actually a bank</div>
+  </footer>
+
+  <script>
+    // ─── CURSOR ───────────────────────────────────────────────
+    const cur  = document.getElementById('cur');
+    const ring = document.getElementById('ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+    });
+
+    (function tick() {
+      rx += (mx - rx) * 0.13;
+      ry += (my - ry) * 0.13;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(tick);
+    })();
+
+    document.querySelectorAll('a, button, .bene-cell, .stat-tile, .skill-cat, .analytics-module').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cur.style.transform = 'translate(-50%,-50%) scale(2)';
+        ring.style.transform = 'translate(-50%,-50%) scale(1.5)';
+        ring.style.borderColor = 'rgba(200,169,81,0.65)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cur.style.transform = 'translate(-50%,-50%) scale(1)';
+        ring.style.transform = 'translate(-50%,-50%) scale(1)';
+        ring.style.borderColor = 'rgba(200,169,81,0.35)';
+      });
+    });
+
+    // ─── CARD 3D TILT ──────────────────────────────────────────
+    const card = document.getElementById('card');
+
+    document.addEventListener('mousemove', e => {
+      const cx = window.innerWidth  / 2;
+      const cy = window.innerHeight / 2;
+      const rotY =  ((e.clientX - cx) / window.innerWidth)  * 22;
+      const rotX = -((e.clientY - cy) / window.innerHeight) * 14;
+      card.style.animation = 'none';
+      card.style.transform = `translateY(-10px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    });
+
+    document.addEventListener('mouseleave', () => {
+      card.style.animation = 'float 5s ease-in-out infinite';
+    });
+
+    // ─── SCROLL REVEAL ─────────────────────────────────────────
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.rev').forEach(el => io.observe(el));
+
+    // ─── COPY EMAIL ────────────────────────────────────────────
+    function copyEmail(btn) {
+      navigator.clipboard.writeText('neelotpalnag@gmail.com').then(() => {
+        const toast = btn.querySelector('.copy-toast');
+        toast.classList.add('visible');
+        btn.querySelector('svg').style.display = 'none';
+        setTimeout(() => {
+          toast.classList.remove('visible');
+          btn.querySelector('svg').style.display = '';
+        }, 2000);
+      });
+    }
+
+    // ─── FORM ──────────────────────────────────────────────────
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.textContent = 'Application Received ✓';
+      btn.disabled = true;
+      btn.style.background = 'var(--green-500)';
+      btn.style.color = 'var(--cream)';
+    }
+  </script>
+</body>
+</html>

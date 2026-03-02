@@ -1,0 +1,25 @@
+# Dependencies (local dev only)
+node_modules/
+package.json
+package-lock.json
+
+# Local dev server
+serve.mjs
+
+# Chrome for Testing (downloaded for screenshots)
+chrome/
+
+# macOS
+.DS_Store
+.DS_Store?
+**/.DS_Store
+
+# Claude project files
+.claude/
+claude.md
+
+# Private documents
+neelotpal_nag_resume.pdf
+
+# Raw (unoptimized) images — use images/optimized/ instead
+images/raw/
