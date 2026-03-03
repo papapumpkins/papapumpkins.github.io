@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><clipPath id='c'><circle cx='50' cy='50' r='43'/></clipPath></defs><circle cx='50' cy='50' r='47' fill='none' stroke='%23C8A951' stroke-width='2'/><circle cx='50' cy='50' r='43' fill='none' stroke='%23C8A951' stroke-width='0.6' opacity='0.4'/><g clip-path='url(%23c)' fill='none' stroke='%23C8A951' stroke-width='1.2'><circle cx='50' cy='50' r='20'/><circle cx='50' cy='30' r='20'/><circle cx='50' cy='70' r='20'/><circle cx='67' cy='40' r='20'/><circle cx='33' cy='40' r='20'/><circle cx='67' cy='60' r='20'/><circle cx='33' cy='60' r='20'/></g></svg>">
   <style>
     :root {
       --bg:            #06080A;
@@ -139,9 +140,9 @@
       color: var(--gold); font-weight: 700;
     }
     .card-circles { display: flex; align-items: center; }
-    .card-circles span { display: block; width: 30px; height: 30px; border-radius: 50%; opacity: 0.88; }
+    .card-circles span { display: block; width: 26px; height: 26px; transform: rotate(45deg); opacity: 0.88; }
     .card-circles span:first-child { background: var(--gold); }
-    .card-circles span:last-child  { background: #8A6E2C; margin-left: -10px; }
+    .card-circles span:last-child  { background: #8A6E2C; margin-left: -12px; }
     .chip {
       width: 46px; height: 36px; border-radius: 7px;
       background: linear-gradient(135deg, #D4AF50 0%, #A07E28 45%, #D4AF50 100%);
@@ -482,6 +483,28 @@
     @media (max-width: 540px) {
       .analytics-grid { grid-template-columns: 1fr; }
     }
+
+    /* ─── LOGO ─── */
+    @keyframes logo-rotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .logo-petals {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: logo-rotate 50s linear infinite;
+    }
+    .card-watermark {
+      position: absolute;
+      top: 50%;
+      left: 54%;
+      transform: translate(-50%, -50%);
+      width: 114px;
+      height: 114px;
+      pointer-events: none;
+      opacity: 0.13;
+      z-index: 0;
+    }
   </style>
 </head>
 <body>
@@ -495,7 +518,7 @@
     <ul class="nav-links">
       <li><a href="#benefits">Benefits</a></li>
       <li><a href="#analytics">Analytics</a></li>
-      <li><a href="#cardholder">Cardholder</a></li>
+      <li><a href="#cardholder">About Us</a></li>
       <li><a href="#apply" class="nav-cta">Contact</a></li>
     </ul>
   </nav>
@@ -507,6 +530,29 @@
     <div class="card-wrap">
       <div class="card" id="card">
         <div class="card-face">
+          <!-- Logo watermark -->
+          <div class="card-watermark" aria-hidden="true">
+            <svg width="114" height="114" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <clipPath id="wm-clip">
+                  <circle cx="50" cy="50" r="43"/>
+                </clipPath>
+              </defs>
+              <!-- Outer double ring — static -->
+              <circle cx="50" cy="50" r="47" fill="none" stroke="#C8A951" stroke-width="1.5"/>
+              <circle cx="50" cy="50" r="43" fill="none" stroke="#C8A951" stroke-width="0.5" opacity="0.5"/>
+              <!-- Inner flower petals — rotating -->
+              <g class="logo-petals" clip-path="url(#wm-clip)" fill="none" stroke="#C8A951" stroke-width="0.9">
+                <circle cx="50" cy="50" r="20"/>
+                <circle cx="50" cy="30" r="20"/>
+                <circle cx="50" cy="70" r="20"/>
+                <circle cx="67.32" cy="40" r="20"/>
+                <circle cx="32.68" cy="40" r="20"/>
+                <circle cx="67.32" cy="60" r="20"/>
+                <circle cx="32.68" cy="60" r="20"/>
+              </g>
+            </svg>
+          </div>
           <div class="card-body">
             <div class="card-top">
               <div class="card-wordmark">Thyme</div>
