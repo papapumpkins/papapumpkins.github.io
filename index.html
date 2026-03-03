@@ -26,6 +26,9 @@
       --cream-mid:     #B8B3A7;
       --cream-dim:     #706C63;
       --mono-muted:    #3A3F44;
+
+      /* ↓ Thyme branch background opacity — adjust this one value */
+      --branch-opacity: 0.15;
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -484,6 +487,17 @@
       .analytics-grid { grid-template-columns: 1fr; }
     }
 
+    /* ─── THYME BRANCHES ─── */
+    .hero-branches-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      opacity: var(--branch-opacity);
+      z-index: 0;
+    }
+    @media (max-width: 767px) { .hero-branches-bg { display: none; } }
+
     /* ─── LOGO ─── */
     @keyframes logo-rotate {
       from { transform: rotate(0deg); }
@@ -526,6 +540,56 @@
   <!-- ─── HERO ─── -->
   <section class="hero">
     <div class="hero-glow"></div>
+
+    <!-- Thyme branches — full-width background (hidden on mobile) -->
+    <svg class="hero-branches-bg" viewBox="0 0 1440 900"
+         preserveAspectRatio="xMidYMid slice"
+         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <!-- Branch shape defined once, reused via <use> below -->
+        <symbol id="ts" viewBox="0 0 200 700" preserveAspectRatio="none" overflow="visible">
+          <g stroke="#C8A951" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 88 690 C 85 520,98 340,92 10" stroke-width="1.2"/>
+            <path d="M 88 651 Q 76 637 63 646 Q 76 657 88 651 Z" stroke-width="0.75"/>
+            <path d="M 88 651 Q 100 637 113 646 Q 100 657 88 651 Z" stroke-width="0.75"/>
+            <path d="M 88 612 Q 76 598 63 607 Q 76 618 88 612 Z" stroke-width="0.75"/>
+            <path d="M 88 612 Q 100 598 113 607 Q 100 618 88 612 Z" stroke-width="0.75"/>
+            <path d="M 88 572 Q 76 558 63 567 Q 76 578 88 572 Z" stroke-width="0.75"/>
+            <path d="M 88 572 Q 100 558 113 567 Q 100 578 88 572 Z" stroke-width="0.75"/>
+            <path d="M 89 531 Q 77 517 64 526 Q 77 537 89 531 Z" stroke-width="0.75"/>
+            <path d="M 89 531 Q 101 517 114 526 Q 101 537 89 531 Z" stroke-width="0.75"/>
+            <path d="M 90 485 Q 78 471 65 480 Q 78 491 90 485 Z" stroke-width="0.75"/>
+            <path d="M 90 485 Q 102 471 115 480 Q 102 491 90 485 Z" stroke-width="0.75"/>
+            <path d="M 90 441 Q 78 427 65 436 Q 78 447 90 441 Z" stroke-width="0.75"/>
+            <path d="M 90 441 Q 102 427 115 436 Q 102 447 90 441 Z" stroke-width="0.75"/>
+            <path d="M 92 396 Q 80 382 67 391 Q 80 402 92 396 Z" stroke-width="0.75"/>
+            <path d="M 92 396 Q 104 382 117 391 Q 104 402 92 396 Z" stroke-width="0.75"/>
+            <path d="M 92 343 Q 80 329 67 338 Q 80 349 92 343 Z" stroke-width="0.75"/>
+            <path d="M 92 343 Q 104 329 117 338 Q 104 349 92 343 Z" stroke-width="0.75"/>
+            <path d="M 93 293 Q 81 279 68 288 Q 81 299 93 293 Z" stroke-width="0.75"/>
+            <path d="M 93 293 Q 105 279 118 288 Q 105 299 93 293 Z" stroke-width="0.75"/>
+            <path d="M 93 232 Q 81 218 68 227 Q 81 238 93 232 Z" stroke-width="0.75"/>
+            <path d="M 93 232 Q 105 218 118 227 Q 105 238 93 232 Z" stroke-width="0.75"/>
+            <path d="M 94 175 Q 82 161 69 170 Q 82 181 94 175 Z" stroke-width="0.75"/>
+            <path d="M 94 175 Q 106 161 119 170 Q 106 181 94 175 Z" stroke-width="0.75"/>
+            <path d="M 93 123 Q 81 109 68 118 Q 81 129 93 123 Z" stroke-width="0.75"/>
+            <path d="M 93 123 Q 105 109 118 118 Q 105 129 93 123 Z" stroke-width="0.75"/>
+            <path d="M 92 60 Q 85 48 78 53 Q 85 64 92 60 Z" stroke-width="0.65"/>
+            <path d="M 92 60 Q 99 48 106 53 Q 99 64 92 60 Z" stroke-width="0.65"/>
+          </g>
+        </symbol>
+      </defs>
+      <!-- 9 branches evenly distributed; y-offset staggers the top/bottom positions -->
+      <use href="#ts" x="10"   y="-20" width="160" height="940"/>
+      <use href="#ts" x="180"  y="60"  width="160" height="940" opacity="0.7"/>
+      <use href="#ts" x="350"  y="-35" width="160" height="940"/>
+      <use href="#ts" x="520"  y="50"  width="160" height="940" opacity="0.65"/>
+      <use href="#ts" x="690"  y="0"   width="160" height="940"/>
+      <use href="#ts" x="860"  y="75"  width="160" height="940" opacity="0.7"/>
+      <use href="#ts" x="1030" y="-20" width="160" height="940"/>
+      <use href="#ts" x="1200" y="40"  width="160" height="940" opacity="0.65"/>
+      <use href="#ts" x="1370" y="10"  width="160" height="940"/>
+    </svg>
 
     <div class="card-wrap">
       <div class="card" id="card">
