@@ -220,7 +220,7 @@
     .bene-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: rgba(200,169,81,0.07); border: 1px solid rgba(200,169,81,0.07); }
     .bene-cell { background: var(--bg-raised); padding: 44px 34px; position: relative; transition: background 0.25s ease; }
     .bene-cell:hover { background: #0D1A22; }
-    .bene-glyph { font-size: 22px; margin-bottom: 22px; display: block; color: var(--gold); opacity: 0.7; }
+    .bene-glyph { margin-bottom: 22px; display: block; color: var(--gold); opacity: 0.7; line-height: 0; }
     .bene-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); background: rgba(200,169,81,0.08); padding: 4px 10px; border-radius: 2px; margin-bottom: 16px; }
     .bene-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; color: var(--cream); line-height: 1.2; margin-bottom: 13px; }
     .bene-desc { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 300; color: var(--cream-dim); line-height: 1.72; }
@@ -531,7 +531,7 @@
     <div class="nav-mark">Thyme | Neel</div>
     <ul class="nav-links">
       <li><a href="#benefits">Benefits</a></li>
-      <li><a href="#analytics">Analytics</a></li>
+      <!-- <li><a href="#analytics">Analytics</a></li> -->
       <li><a href="#cardholder">About Us</a></li>
       <li><a href="#apply" class="nav-cta">Contact</a></li>
     </ul>
@@ -642,9 +642,9 @@
     <div class="hero-copy">
       <div class="hero-eyebrow">Limited Edition</div>
       <h1 class="hero-h1">The card that is<br><em>actually a person.</em></h1>
-      <p class="hero-sub">Introducing Neel &mdash; the world's first AI-first<br>Credit Risk professional disguised as a credit product.</p>
+      <p class="hero-sub">World's first risk professional disguised as a credit card.</p>
       <div class="hero-cta">
-        <a href="#apply" class="btn-gold">Apply Now</a>
+        <a href="#apply" class="btn-gold">Get in touch</a>
         <a href="#benefits" class="btn-ghost">View Benefits</a>
       </div>
     </div>
@@ -664,10 +664,9 @@
         <div class="label-mono">What (who) is Thyme Card?</div>
         <h2 class="h2-serif" style="margin-top:20px;margin-bottom:26px;">Credit risk expertise,<br><em>powered by AI.</em></h2>
         <p class="body-serif">
-         Other credit cards promise rewards. <strong>Thyme Card is the reward</strong> &mdash; a Credit Risk Professional
-          who knows how to build the intelligence, and the systems that leverage the power of AI to act upon it. From consumer lending products such as BNPL and micro-financing, to lines of credit for SME/MSMEs, Thyme Card knows how to make sure your portfolio stays robust and delivers business.
+         Other credit cards promise rewards. <strong>Thyme Card is the reward.</strong>
           <br><br>
-          Become an AI-first Risk and Compliance engine, deploy AI agents to multiply your operational efficiency, and guarantee the highest standards of service. 
+          Build an AI-powered Risk and Compliance engine, deploy agents to multiply your operational efficiency, and guarantee the highest standards of service.
         </p>
       </div>
 
@@ -677,16 +676,16 @@
           <div class="stat-desc">Risk, Compliance and Engineering Experience</div>
         </div>
         <div class="stat-tile">
-          <div class="stat-num">Agentic AI</div>
-          <div class="stat-desc">Production-ready AI agents and workflows deployed</div>
+          <div class="stat-num">AI-Powered</div>
+          <div class="stat-desc">Creating production-quality AI agents and workflows</div>
         </div>
         <div class="stat-tile">
-          <div class="stat-num">US & EU</div>
+          <div class="stat-num">B2B & Consumer</div>
           <div class="stat-desc">Experienced in US B2B lending and 9 EU consumer lending markets</div>
         </div>
         <div class="stat-tile">
           <div class="stat-num">€3M+</div>
-          <div class="stat-desc">Loss Reductions and Efficiency Gains</div>
+          <div class="stat-desc">Impact via Loss Reductions and Efficiency Gains</div>
         </div>
       </div>
     </div>
@@ -703,175 +702,77 @@
 
     <div class="bene-grid">
       <div class="bene-cell rev d1">
-        <span class="bene-glyph">⬡</span>
+        <span class="bene-glyph">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-1.07-3.23A3 3 0 0 1 5 13.5a3 3 0 0 1 2.14-2.87 2.5 2.5 0 0 1 1.08-4.07A2.5 2.5 0 0 1 9.5 2z"/>
+            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 1.07-3.23A3 3 0 0 0 19 13.5a3 3 0 0 0-2.14-2.87 2.5 2.5 0 0 0-1.08-4.07A2.5 2.5 0 0 0 14.5 2z"/>
+          </svg>
+        </span>
         <div class="bene-tag">Decision Engine</div>
-        <h3 class="bene-title">Automated Underwriting</h3>
-        <p class="bene-desc">End-to-end credit decision architecture: scoring models, policy rule integration, and real-time decisioning. Compliance and audit readiness is never compromised on.</p>
+        <h3 class="bene-title">Risk Intelligence</h3>
+        <p class="bene-desc">Curating end-to-end risk product: scoring models, policies, and real-time portfolio monitoring. <br><br> Compliance and transparency are never compromised with.</p>
       </div>
       <div class="bene-cell rev">
-        <span class="bene-glyph">◈</span>
+        <span class="bene-glyph">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="7" y="7" width="10" height="10" rx="1.5"/>
+            <path d="M7 9.5H4M7 12H4M7 14.5H4M17 9.5h3M17 12h3M17 14.5h3M9.5 7V4M12 7V4M14.5 7V4M9.5 17v3M12 17v3M14.5 17v3"/>
+            <line x1="10" y1="10" x2="14" y2="14" stroke-width="0.9"/>
+            <line x1="14" y1="10" x2="10" y2="14" stroke-width="0.9"/>
+          </svg>
+        </span>
         <div class="bene-tag">AI-Powered</div>
-        <h3 class="bene-title">Agentic AI for Risk & Due Diligence</h3>
-        <p class="bene-desc"> Build AI-first systems for boosting decision-making in Underwriting and Customer Due Diligence. Improve operational speed and efficiency in highly regulated financial environments using agentic process frameworks.</p>
+        <h3 class="bene-title">Agentic AI for Risk</h3>
+        <p class="bene-desc"> Building AI-first systems for enhancing decision-making in Underwriting and KYC. Improving operational speed, efficiency and audit-readiness with agentic frameworks.</p>
+      </div>
+      <div class="bene-cell rev">
+        <span class="bene-glyph">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="3,18 7,12 11,15 16,8 21,5"/>
+            <line x1="3" y1="21" x2="21" y2="21"/>
+            <line x1="3" y1="21" x2="3" y2="4"/>
+          </svg>
+        </span>
+        <div class="bene-tag">Analytics</div>
+        <h3 class="bene-title">Analytical Flair</h3>
+        <p class="bene-desc">Combination of proven analytical flair and research-driven intuitions to develop advanced analytics across your organization.</p>
       </div>
       <div class="bene-cell rev d2">
-        <span class="bene-glyph">◉</span>
-        <div class="bene-tag">Intelligence</div>
-        <h3 class="bene-title">Portfolio Management</h3>
-        <p class="bene-desc">Managing a $100M portfolio of US-based SMEs with 600+ clients at Parker. Managed real-time decision policies and risk performance across nine EU markets at Klarna.</p>
-      </div>
-      <div class="bene-cell rev">
-        <span class="bene-glyph">◫</span>
-        <div class="bene-tag">Analytics</div>
-        <h3 class="bene-title">Measure What Matters</h3>
-        <p class="bene-desc">Combination of proven analytical flair and research-driven intuitions to develop world-class analytics across your organization. Establish processes for automated experimentations and actions based on meticulously-selected metrics.</p>
+        <span class="bene-glyph">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </span>
+        <div class="bene-tag">Skills</div>
+        <h3 class="bene-title">Future-ready Skills</h3>
+        <p class="bene-desc">Equipped with skills that drive the creation of next-generation risk fucntions. Solid foundations of Python and SQL, practical knowledge of agentic tools (LangGraph) and MCPs, and the engineer mindset that puts them to use.</p>
       </div>
       <div class="bene-cell rev d1">
-        <span class="bene-glyph">◑</span>
+        <span class="bene-glyph">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9,12 11,14 15,10" stroke-width="1.1"/>
+          </svg>
+        </span>
         <div class="bene-tag">Financial Crime</div>
         <h3 class="bene-title">Fraud &amp; AML Strategy</h3>
-        <p class="bene-desc">End-to-end ownership of AML and Fraud strategy at Parker. With deep experience of AML and Fraud monitoring systems at Citibank and Parker, ensure robust protection against bad actors and keep your banking partners and debt facilities happy.</p>
+        <p class="bene-desc">End-to-end ownership of AML and Fraud strategy at Parker. Leveraging AML experience from Citibank. Keeping fraud losses below 1 bps of GPV.</p>
       </div>
       <div class="bene-cell rev d2">
-        <span class="bene-glyph">◬</span>
+        <span class="bene-glyph">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="22" x2="21" y2="22"/>
+            <line x1="6" y1="18" x2="6" y2="11"/>
+            <line x1="10" y1="18" x2="10" y2="11"/>
+            <line x1="14" y1="18" x2="14" y2="11"/>
+            <line x1="18" y1="18" x2="18" y2="11"/>
+            <polygon points="12,2 21,7 3,7"/>
+          </svg>
+        </span>
         <div class="bene-tag">Navigate Regulations</div>
         <h3 class="bene-title">Pliancy with Compliance</h3>
-        <p class="bene-desc">Never compromise with compliance. Your partner banks will be happy with elaborate regulatory reporting. Your debt facilities will be happy with detailed financial reporting. Your compliance team will either thank you or be replaced by agents.</p>
+        <p class="bene-desc">Never compromise with compliance. We can keep your partner banks and debt facilities happy with detailed and acurate reporting. Your compliance team will either thank you or be replaced by agents.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ─── ANALYTICS SUITE ─── -->
-  <section class="analytics sec" id="analytics">
-    <div class="analytics-header rev">
-      <div class="analytics-tag">Integrated Intelligence</div>
-      <div class="label-mono">Thyme Analytics&trade;</div>
-      <h2 class="h2-serif" style="margin-top:18px;">Integrated analytics.<br><em>Real-time. Always on.</em></h2>
-      <p class="analytics-sub">Your Thyme Card ships with a full portfolio intelligence suite &mdash; because owning the credit policy without monitoring it is just wishful thinking.</p>
-    </div>
-
-    <div class="analytics-grid">
-
-      <!-- Portfolio Monitor -->
-      <div class="analytics-module rev">
-        <div class="analytics-viz">
-          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-            <polyline points="0,44 18,38 36,30 54,33 72,20 90,13 110,7" stroke="#52B788" stroke-width="1.5" fill="none" opacity="0.85"/>
-            <polyline points="0,44 18,38 36,30 54,33 72,20 90,13 110,7" stroke="url(#pg)" stroke-width="0" fill="url(#pf)" opacity="0.15"/>
-            <defs>
-              <linearGradient id="pg" x1="0" y1="0" x2="110" y2="0"><stop offset="0%" stop-color="#52B788"/><stop offset="100%" stop-color="#C8A951"/></linearGradient>
-              <linearGradient id="pf" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#52B788" stop-opacity="0.3"/><stop offset="100%" stop-color="#52B788" stop-opacity="0"/></linearGradient>
-            </defs>
-            <circle cx="110" cy="7" r="3" fill="#C8A951"/>
-          </svg>
-        </div>
-        <div class="analytics-module-name">Portfolio Monitor</div>
-        <div class="analytics-module-desc">Real-time credit performance monitoring. Approval, delinquency and loss rates surfaced continuously across cohorts and vintages.</div>
-        <span class="analytics-module-tag">Live</span>
-      </div>
-
-      <!-- Risk Intelligence -->
-      <div class="analytics-module rev d1">
-        <div class="analytics-viz">
-          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 46 A40 40 0 0 1 100 46" stroke="#1A3A28" stroke-width="6" fill="none"/>
-            <path d="M10 46 A40 40 0 0 1 72 16" stroke="#52B788" stroke-width="6" fill="none" stroke-linecap="round"/>
-            <circle cx="72" cy="16" r="4" fill="#C8A951"/>
-            <text x="55" y="44" font-family="IBM Plex Mono" font-size="9" fill="#706C63" text-anchor="middle">SCORE</text>
-            <text x="55" y="35" font-family="IBM Plex Mono" font-size="11" fill="#C8A951" text-anchor="middle" font-weight="500">742</text>
-          </svg>
-        </div>
-        <div class="analytics-module-name">Risk Intelligence</div>
-        <div class="analytics-module-desc">ML-driven risk scoring, enhanced with AI-assisted evaluation, credit bureau and open-banking data, and behavioural signals.</div>
-        <span class="analytics-module-tag">Data-Powered</span>
-      </div>
-
-      <!-- Vintage Analysis -->
-      <!-- <div class="analytics-module rev d2">
-        <div class="analytics-viz">
-          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4"  y="38" width="14" height="10" rx="1" fill="#52B788" opacity="0.9"/>
-            <rect x="22" y="28" width="14" height="20" rx="1" fill="#52B788" opacity="0.75"/>
-            <rect x="40" y="19" width="14" height="29" rx="1" fill="#52B788" opacity="0.6"/>
-            <rect x="58" y="24" width="14" height="24" rx="1" fill="#C8A951" opacity="0.55"/>
-            <rect x="76" y="33" width="14" height="15" rx="1" fill="#C8A951" opacity="0.4"/>
-            <rect x="94" y="40" width="12" height="8"  rx="1" fill="#3A3F44" opacity="0.6"/>
-            <text x="4"  y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q1</text>
-            <text x="22" y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q2</text>
-            <text x="40" y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q3</text>
-            <text x="58" y="48" font-family="IBM Plex Mono" font-size="6" fill="#C8A951" opacity="0.5">Q4</text>
-          </svg>
-        </div>
-        <div class="analytics-module-name">Vintage Analysis</div>
-        <div class="analytics-module-desc">Cohort-level loss curves and aging analysis. See how every book of business performs over its lifetime.</div>
-        <span class="analytics-module-tag">Cohort View</span>
-      </div> -->
-
-      <!-- Vintage Analysis -->
-      <div class="analytics-module rev d2">
-        <div class="analytics-viz">
-          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4"  y="38" width="14" height="10" rx="1" fill="#52B788" opacity="0.9"/>
-            <rect x="22" y="28" width="14" height="20" rx="1" fill="#52B788" opacity="0.75"/>
-            <rect x="40" y="19" width="14" height="29" rx="1" fill="#52B788" opacity="0.6"/>
-            <rect x="58" y="24" width="14" height="24" rx="1" fill="#C8A951" opacity="0.55"/>
-            <rect x="76" y="33" width="14" height="15" rx="1" fill="#C8A951" opacity="0.4"/>
-            <rect x="94" y="40" width="12" height="8"  rx="1" fill="#3A3F44" opacity="0.6"/>
-            <text x="4"  y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q1</text>
-            <text x="22" y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q2</text>
-            <text x="40" y="48" font-family="IBM Plex Mono" font-size="6" fill="#52B788" opacity="0.5">Q3</text>
-            <text x="58" y="48" font-family="IBM Plex Mono" font-size="6" fill="#C8A951" opacity="0.5">Q4</text>
-          </svg>
-        </div>
-        <div class="analytics-module-name">Agentic Design</div>
-        <div class="analytics-module-desc">Design with an AI-first mindset. MCPs and Orchestrators are the present and the future. </div>
-        <span class="analytics-module-tag">Orchestrate</span>
-      </div>
-      
-      <!-- Decision Engine -->
-      <div class="analytics-module rev d3">
-        <div class="analytics-viz">
-          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="38" y="2" width="34" height="14" rx="2" fill="#1A4232" stroke="#52B788" stroke-width="0.75"/>
-            <text x="55" y="13" font-family="IBM Plex Mono" font-size="7" fill="#52B788" text-anchor="middle">INPUT</text>
-            <line x1="55" y1="16" x2="55" y2="24" stroke="#52B788" stroke-width="0.75"/>
-            <polygon points="55,24 50,20 60,20" fill="#52B788" opacity="0.6"/>
-            <line x1="55" y1="25" x2="22" y2="36" stroke="#52B788" stroke-width="0.75"/>
-            <line x1="55" y1="25" x2="88" y2="36" stroke="#3A4A3A" stroke-width="0.75"/>
-            <rect x="4"  y="36" width="36" height="13" rx="2" fill="#1A4232" stroke="#52B788" stroke-width="0.75"/>
-            <rect x="70" y="36" width="36" height="13" rx="2" fill="#0B1015" stroke="#3A4A3A" stroke-width="0.75"/>
-            <text x="22" y="47" font-family="IBM Plex Mono" font-size="6.5" fill="#52B788" text-anchor="middle">APPROVE</text>
-            <text x="88" y="47" font-family="IBM Plex Mono" font-size="6.5" fill="#706C63" text-anchor="middle">REVIEW</text>
-          </svg>
-        </div>
-        <div class="analytics-module-name">Evaluation Engine</div>
-        <div class="analytics-module-desc">Automated screening of applications with HITL at every critical step. Fully auditable.</div>
-        <span class="analytics-module-tag">Agentic AI</span>
-      </div>
-
-      <!-- Fraud Radar -->
-      <div class="analytics-module rev d3">
-        <div class="analytics-viz"> 
-          <svg width="100%" height="52" viewBox="0 0 110 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="18" cy="34" r="2.5" fill="#52B788" opacity="0.55"/>
-            <circle cx="32" cy="26" r="2.5" fill="#52B788" opacity="0.55"/>
-            <circle cx="46" cy="30" r="2.5" fill="#52B788" opacity="0.55"/>
-            <circle cx="38" cy="40" r="2.5" fill="#52B788" opacity="0.55"/>
-            <circle cx="28" cy="20" r="2.5" fill="#52B788" opacity="0.55"/>
-            <circle cx="55" cy="37" r="2.5" fill="#52B788" opacity="0.55"/>
-            <circle cx="48" cy="18" r="2.5" fill="#52B788" opacity="0.55"/>
-            <circle cx="62" cy="24" r="2.5" fill="#52B788" opacity="0.55"/>
-            <circle cx="90" cy="9"  r="5.5" fill="#C8A951" opacity="0.9"/>
-            <circle cx="90" cy="9"  r="9"   stroke="#C8A951" stroke-width="0.75" fill="none" opacity="0.3"/>
-            <line x1="70" y1="22" x2="86" y2="12" stroke="#C8A951" stroke-width="0.75" stroke-dasharray="3,2"/>
-            <text x="90" y="12" font-family="IBM Plex Mono" font-size="5.5" fill="#C8A951" text-anchor="middle">!</text>
-          </svg>
-        </div>
-        <div class="analytics-module-name">AML and Fraud Radar</div>
-        <div class="analytics-module-desc">Monitor your customers for unusual activity, and flag outliers before they become incidents. Minimize operational burden via constant improvement cycles and AI usage.</div>
-        <span class="analytics-module-tag">AML / Fraud</span>
-      </div>
-
     </div>
   </section>
 
